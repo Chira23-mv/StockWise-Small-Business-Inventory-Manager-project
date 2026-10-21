@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}{% block page_heading %}Good day, shop owner{% endblock %}
+{% block content %}
+<div class="welcome-row"><div><p class="muted">Here’s what’s happening with your inventory today.</p></div><a class="btn btn-primary" href="{{ url_for('product_new') }}">＋ Add product</a></div>
+<div class="stats-grid">
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">TOTAL PRODUCTS</span><span class="stat-icon blue">▤</span></div><strong>{{ totals.products }}</strong><small>Items in your catalogue</small></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">SUPPLIERS</span><span class="stat-icon purple">♙</span></div><strong>{{ totals.suppliers }}</strong><small>Supplier contacts saved</small></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">LOW STOCK ALERTS</span><span class="stat-icon orange">!</span></div><strong>{{ totals.low_stock }}</strong><small>At or below reorder level</small></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">INVENTORY VALUE</span><span class="stat-icon green">₹</span></div><strong>{{ totals.inventory_value|money }}</strong><small>Based on cost price</small></article>
+</div>
+<div class="content-grid">
+  <section class="panel"><div class="panel-heading"><div><h2>Low-stock watchlist</h2><p>Products that may need replenishing</p></div><a class="text-link" href="{{ url_for('products') }}">View all →</a></div>
+    {% if low_products %}<div class="table-wrap"><table><thead><tr><th>PRODUCT</th><th>IN STOCK</th><th>REORDER AT</th><th>STATUS</th></tr></thead><tbody>{% for p in low_products %}<tr><td><strong>{{ p.name }}</strong><small class="subcell">{{ p.sku }}</small></td><td>{{ p.quantity }}</td><td>{{ p.reorder_level }}</td><td><span class="pill danger">Low stock</span></td></tr>{% endfor %}</tbody></table></div>
+    {% else %}<div class="empty-state"><span>✓</span><strong>All shelves look good</strong><p>No products are below their reorder level.</p></div>{% endif %}
+  </section>
+  <section class="panel"><div class="panel-heading"><div><h2>Quick actions</h2><p>Keep stock records up to date</p></div></div>
+    <div class="quick-actions"><a href="{{ url_for('stock') }}"><span class="quick-icon green">＋</span><span><strong>Record stock in</strong><small>Log a new delivery</small></span><b>→</b></a><a href="{{ url_for('stock') }}"><span class="quick-icon orange">−</span><span><strong>Record stock out</strong><small>Log sold or removed units</small></span><b>→</b></a><a href="{{ url_for('supplier_new') }}"><span class="quick-icon purple">♙</span><span><strong>Add supplier</strong><small>Save a supplier contact</small></span><b>→</b></a><a href="{{ url_for('reports') }}"><span class="quick-icon blue">▥</span><span><strong>View reports</strong><small>Review and export data</small></span><b>→</b></a></div>
+  </section>
+</div>
+<section class="panel recent-panel"><div class="panel-heading"><div><h2>Recent stock activity</h2><p>Your latest inventory movements</p></div><a class="text-link" href="{{ url_for('stock') }}">Full history →</a></div>
+{% if recent %}<div class="table-wrap"><table><thead><tr><th>PRODUCT</th><th>TYPE</th><th>QUANTITY</th><th>NOTE</th><th>DATE</th></tr></thead><tbody>{% for m in recent %}<tr><td><strong>{{ m.product_name }}</strong><small class="subcell">{{ m.sku }}</small></td><td><span class="pill {{ 'success' if m.movement_type == 'IN' else 'info' }}">{{ 'Stock in' if m.movement_type == 'IN' else 'Stock out' }}</span></td><td>{{ '+' if m.movement_type == 'IN' else '−' }}{{ m.quantity }}</td><td>{{ m.note or '—' }}</td><td>{{ m.created_at[:16] }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state compact"><p>No stock activity yet. Add a product to get started.</p></div>{% endif %}
+</section>
+{% endblock %}

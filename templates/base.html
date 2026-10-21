@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}StockWise{% endblock %} · StockWise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/refresh.css') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">S</span><span>StockWise<small>INVENTORY CONTROL</small></span></a>
+    <div class="nav-label">WORKSPACE</div>
+    <nav>
+      <a class="{{ 'active' if request.endpoint == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}"><span>▦</span> Overview</a>
+      <a class="{{ 'active' if request.endpoint in ['products','product_new','product_edit'] else '' }}" href="{{ url_for('products') }}"><span>▤</span> Products</a>
+      <a class="{{ 'active' if request.endpoint in ['suppliers','supplier_new'] else '' }}" href="{{ url_for('suppliers') }}"><span>♙</span> Suppliers</a>
+      <a class="{{ 'active' if request.endpoint == 'stock' else '' }}" href="{{ url_for('stock') }}"><span>⇅</span> Stock In / Out</a>
+      <a class="{{ 'active' if request.endpoint == 'reports' else '' }}" href="{{ url_for('reports') }}"><span>▥</span> Reports</a>
+    </nav>
+    <div class="sidebar-bottom"><div class="status-dot"></div><div><strong>Local workspace</strong><small>Your data stays on this device</small></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><span class="eyebrow">SMALL BUSINESS INVENTORY</span><h1>{% block page_heading %}Overview{% endblock %}</h1></div><div class="topbar-date">{{ today_label if today_label else '' }}</div></header>
+    <section class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}<button type="button" class="flash-close" aria-label="Dismiss">×</button></div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+      <footer>StockWise <span>·</span> Keep your shelves ready.</footer>
+    </section>
+  </main>
+</body>
+</html>

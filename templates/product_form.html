@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}{{ 'Edit product' if product else 'Add product' }}{% endblock %}{% block page_heading %}{{ 'Edit product' if product else 'Add a product' }}{% endblock %}
+{% block content %}<div class="form-intro"><p class="muted">{{ 'Update product details below. Use Stock In / Out to adjust inventory.' if product else 'Add a product to your catalogue and set its opening stock.' }}</p></div>
+<form method="post" class="panel form-panel"><div class="form-grid">
+<label>Product name <span>*</span><input required name="name" value="{{ product.name if product else '' }}" placeholder="e.g. Classic notebook"></label>
+<label>SKU / Product code <span>*</span><input required name="sku" value="{{ product.sku if product else '' }}" placeholder="e.g. NOTE-001"></label>
+<label>Category<input name="category" value="{{ product.category if product else '' }}" placeholder="e.g. Stationery"></label>
+<label>Supplier<select name="supplier_id"><option value="">No supplier</option>{% for s in suppliers %}<option value="{{ s.id }}" {{ 'selected' if product and product.supplier_id == s.id else '' }}>{{ s.name }}</option>{% endfor %}</select></label>
+<label>Cost price (₹)<input required type="number" min="0" step="0.01" name="cost_price" value="{{ product.cost_price if product else '0.00' }}"></label>
+<label>Selling price (₹)<input required type="number" min="0" step="0.01" name="selling_price" value="{{ product.selling_price if product else '0.00' }}"></label>
+{% if not product %}<label>Opening quantity<input required type="number" min="0" step="1" name="quantity" value="0"></label>{% endif %}
+<label>Low-stock alert at<input required type="number" min="0" step="1" name="reorder_level" value="{{ product.reorder_level if product else 5 }}"></label>
+</div><div class="form-actions"><a class="btn btn-secondary" href="{{ url_for('products') }}">Cancel</a><button class="btn btn-primary" type="submit">{{ 'Save changes' if product else 'Add product' }}</button></div></form>{% endblock %}
